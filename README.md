@@ -10,33 +10,33 @@ For this E-commerce sales data analysis project, several key problems need to be
 5.	**Marketing ROI Measurement:** Challenges in correlating product presentation (links) with sales performance to optimize marketing efforts.
 # **Project Objectives**
 ## **1. Product Performance Analysis**
-•	Identify top-performing products by sales volume and revenue
-•	Analyze the relationship between discount levels and sales performance
-•	Compare actual price vs. discounted price effectiveness
+-	Identify top-performing products by sales volume and revenue
+-	Analyze the relationship between discount levels and sales performance
+-	Compare actual price vs. discounted price effectiveness
 ## **2. Category Optimization**
-•	Determine which product categories generate the most revenue
-•	Identify underperforming categories that may need restructuring
-•	Analyze category-specific pricing strategies
+-	Determine which product categories generate the most revenue
+-	Identify underperforming categories that may need restructuring
+-	Analyze category-specific pricing strategies
 ## **3. Customer Behavior Insights**
-•	Examine the relationship between product ratings and sales performance
-•	Analyze review content sentiment and its impact on product success
-•	Identify patterns in customer feedback that correlate with high/low sales
+-	Examine the relationship between product ratings and sales performance
+-	Analyze review content sentiment and its impact on product success
+-	Identify patterns in customer feedback that correlate with high/low sales
 ## **4. Pricing Strategy Evaluation**
-•	Determine optimal discount percentages that maximize both sales volume and profit
-•	Analyze whether higher-priced items perform better with certain discount ranges
+-	Determine optimal discount percentages that maximize both sales volume and profit
+-	Analyze whether higher-priced items perform better with certain discount ranges
 ## **5. Marketing Effectiveness**
-•	Analyze if certain types of review titles/content correlate with higher sales
+-	Analyze if certain types of review titles/content correlate with higher sales
 ## **6. User Engagement Analysis**
-•	Identify power users who contribute many reviews
-•	Analyze whether certain users' reviews have disproportionate impact on sales
-•	Examine patterns in user engagement across different product categories
+-	Identify power users who contribute many reviews
+-	Analyze whether certain users' reviews have disproportionate impact on sales
+-	Examine patterns in user engagement across different product categories
 
 ## **📖 Background** 
 E-commerce businesses rely on data to optimize pricing, inventory, and marketing. This analysis helps answer critical questions:  
-•	Which products deserve promotion?
-•	Are discounts increasing sales or hurting profits?
-•	Do customer reviews actually drive purchases?
-•	Who are our most influential shoppers?
+-  Which products and categories generate the most revenue?
+-	Are discounts increasing sales or hurting profits?
+-	Do customer reviews actually drive purchases?
+-	Who are our most influential shoppers?
 
 By examining **sales volume, revenue, discounts, and reviews**, we derive actionable insights to improve profitability and customer satisfaction.
 
@@ -51,7 +51,7 @@ By examining **sales volume, revenue, discounts, and reviews**, we derive action
 ## **📊 Analysis & Key Findings**  
 
 ### **1️⃣ Product Performance**  
-# **Top-performing products by sales volume & revenue:**  
+ **Top-performing products by sales volume & revenue:**  
 - **Query:**  
 ```sql
 SELECT 
@@ -67,7 +67,7 @@ ORDER BY estimated_revenue DESC
 LIMIT 10;
   ```
 
-# **Discount effectiveness:**
+ **Discount effectiveness:**
 - Products with **0-25% discounts** had the highest sales lift.  
 - Discounts >30% did **not** proportionally increase sales, hurting margins.    
 - **Query:**  
@@ -85,7 +85,7 @@ GROUP BY discount_range
 ORDER BY discount_range;
   ```
 
-# **Actual vs. discounted price impact:**  
+ **Actual vs. discounted price impact:**  
 - Items priced Minimal discounts performed best and had high ratings.  
 - Overpriced items (high `actual_price`) saw poor sales even with discounts and low ratings.  
 - **Query:**  
@@ -121,7 +121,7 @@ ORDER BY total_revenue DESC
 LIMIT 10;
   ```
 
-**10 Underperforming categories:**  
+**Underperforming categories:**  
 - Low-revenue categories had either **ineffective pricing**.  
 - **Query:**  
   ```sql
@@ -130,15 +130,15 @@ LIMIT 10;
     AVG(rating_count) AS avg_sales,
     AVG(rating) AS avg_rating,
     COUNT(*) AS product_count
-FROM products
-GROUP BY category
-HAVING AVG(rating_count) < (SELECT AVG(rating_count) FROM products)
-ORDER BY avg_sales; 
- ```
+    FROM products
+    GROUP BY category
+  HAVING AVG(rating_count) < (SELECT AVG(rating_count) FROM products)
+    ORDER BY avg_sales; 
+     ```
 **Category-specific pricing strategies:**  
-- **Home and Kitchen Accessories has the lowest discount and pricing but the highest sales volume.  
+- **Home and Kitchen Accessories has the lowest discount and pricing but the highest sales volume.**  
 - **Query:**  
-  ```sql
+```sql
 SELECT 
     category,
     AVG(discounted_price) AS avg_price,
@@ -148,14 +148,14 @@ FROM products
 GROUP BY category
 ORDER BY avg_sales DESC
 LIMIT 10;
-
+```
 ---
 
 ### **3️⃣ Customer Behavior Insights**  
 **Ratings vs. sales performance:**  
 - Products rated **4.0+** had **2.5x more sales** than those below 3.0.  
 - **Query:**  
-  ```sql
+```sql
 SELECT 
     FLOOR(rating) AS rating_floor,
     AVG(rating_count) AS avg_sales,
@@ -164,12 +164,12 @@ FROM products
 WHERE rating > 0
 GROUP BY rating_floor
 ORDER BY rating_floor DESC;
-
+ ```
 **Review sentiment impact:**  
 - Products with **"excellent" or "great"** in reviews had **30% higher sales**.  
 - Negative reviews ("poor," "disappointing") reduced conversions.  
-- **Query:**  
-  ```sql
+- **Query:**
+```sql
 SELECT 
     CASE
         WHEN review_content ~* 'excellent|great|awesome|perfect' THEN 'positive'
@@ -181,11 +181,11 @@ SELECT
 FROM products
 WHERE review_content IS NOT NULL
 GROUP BY sentiment;
-‘’’
+```
 **Customer feedback patterns:**  
 - Detailed reviews (>100 chars) **increased trust** and sales.  
 - **Query:**  
-  ```sql
+```sql
 SELECT 
     CASE
         WHEN LENGTH(review_content) > 100 THEN 'Detailed review'
@@ -196,14 +196,14 @@ SELECT
     AVG(rating) AS avg_rating
 FROM products
 GROUP BY review_type;
-
+```
 ---
 
 ### **4️⃣ Pricing Strategy Evaluation**  
 **Higher-priced items with discounts:**  
 - **Premium products** sold best with **0-9% discounts**
 - **Query:**  
-  ```sql
+```sql
 SELECT 
     CASE
         WHEN discounted_price > 100 THEN 'Premium'
@@ -219,11 +219,11 @@ WHERE discounted_price IS NOT NULL
   AND rating_count IS NOT NULL
 GROUP BY price_tier, discount_range
 ORDER BY price_tier, discount_range;
-  ```
+```
 ### **5️⃣ User Engagement Analysis**  
 **Power users (top reviewers):**  
 - **Query:**  
-  ```sql
+```sql
 SELECT 
     user_id,
     user_name,
@@ -237,11 +237,11 @@ ORDER BY reviews_written DESC
 LIMIT 10;
   ```
 
-** User review impact on sales:**  
+**User review impact on sales:**  
 - No meaningful relationship between their ratings and product performance.
 
 - **Query:**  
-  ```sql
+```sql
 SELECT 
     user_id,
     user_name,
@@ -253,12 +253,12 @@ WHERE user_id IS NOT NULL
 GROUP BY user_id, user_name
 HAVING COUNT(*) > 5
 ORDER BY ABS(CORR(rating, rating_count)) DESC;
-‘’’
-** User engagement by category:**  
+```
+**User engagement by category:**  
 - computer Accessories had the **most engaged reviewers**.  
 - Home and Kitchen Accessories had the **highest ratio of short reviews**.  
 - **Query:**  
-  ```sql
+```sql
 SELECT 
     category,
     COUNT(DISTINCT user_id) AS unique_reviewers,
@@ -269,7 +269,7 @@ WHERE user_id IS NOT NULL
 GROUP BY category
 ORDER BY unique_reviewers DESC
 LIMIT 10;
-
+```
 ---
 
 ## **📚 What I Learned**  
